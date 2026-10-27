@@ -15,7 +15,7 @@
     return o;
   };
   const c = {
-    version: '2026-10-25',
+    version: '2026-10-27',
     source: 'KIJA_CEO_改革分析与落地方案.md 附录 A.6',
     fy25: {
       revenue_bn: 5149.4,            // FY25 收入

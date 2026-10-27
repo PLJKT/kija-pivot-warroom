@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -12,7 +12,7 @@
   --muted:#5C6B61; --ok:#2E7D4F; --warn:#C07A2D; --high:#B04A2E; --soft:#E4E9E0;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:"Segoe UI","Microsoft YaHei",system-ui,-apple-system,sans-serif;background:var(--paper);color:var(--ink);line-height:1.55;font-size:14px}
+body{font-family:"Segoe UI","Inter",system-ui,-apple-system,sans-serif;background:var(--paper);color:var(--ink);line-height:1.55;font-size:14px}
 header{background:var(--ink);color:#EDF2EC;padding:16px 22px 14px}
 .hd-inner{max-width:1180px;margin:0 auto;display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap}
 .hd-title{display:flex;align-items:center;gap:12px}
@@ -21,10 +21,15 @@ header{background:var(--ink);color:#EDF2EC;padding:16px 22px 14px}
 .hd-title p{font-size:12px;color:#AFC2B4;margin-top:1px}
 .hd-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
 .hd-meta{font-size:11px;color:#AFC2B4;text-align:right;line-height:1.6}
+.lang-switch{display:flex;gap:0;border:1px solid rgba(255,255,255,.25);border-radius:8px;overflow:hidden}
+.lang-switch button{background:transparent;border:none;color:#AFC2B4;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:.5px;transition:all .15s}
+.lang-switch button.on{background:var(--green);color:#fff}
+.lang-switch button:hover:not(.on){color:#EDF2EC;background:rgba(255,255,255,.08)}
 nav.tabs{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid var(--line)}
 .tabs-inner{max-width:1180px;margin:0 auto;display:flex;gap:2px;overflow-x:auto;padding:0 12px}
 .tabs a{display:block;padding:10px 12px 9px;font-size:13px;color:var(--muted);text-decoration:none;border-bottom:2px solid transparent;white-space:nowrap}
 .tabs a:hover{color:var(--ink)}
+.tabs a.on{color:var(--green);border-bottom-color:var(--green)}
 main{max-width:1180px;margin:0 auto;padding:20px 16px 60px}
 section{margin-bottom:34px}
 .band-tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:1.2px;color:var(--teal);text-transform:uppercase;margin-bottom:4px}
@@ -80,14 +85,23 @@ footer .f-in{max-width:1180px;margin:0 auto;line-height:1.7}
       <span class="logo">K</span>
       <div>
         <h1>KIJA Pivot War Room</h1>
-        <p>改革分析与落地方案 v0.9 · 门控 / KPI 三态 / 风险触发器 / 三情景 / 日历</p>
+        <p id="hd-sub">Reform analysis &amp; delivery plan v0.9 · Gates / KPI three-state / Risk triggers / Scenarios / Calendar</p>
       </div>
     </div>
     <div class="hd-right">
+      <div class="lang-switch" id="lang-switch">
+        <button data-lang="en" class="on">EN</button>
+        <button data-lang="id">ID</button>
+        <button data-lang="zh">中文</button>
+      </div>
       <div class="hd-meta" id="hd-meta"></div>
       <div class="hd-meta">
-        <label>评估基准日（asOf）：
-          <input type="date" id="asOf" value="2026-10-25"
+        <a href="Jababeka_Strategy_2026_2030_Board_Discussion.pdf" target="_blank"
+           style="display:inline-block;margin-bottom:6px;padding:4px 10px;background:var(--green);color:#fff;border-radius:6px;font-size:11px;font-weight:700;text-decoration:none">
+          ▶ Board Discussion Deck (PDF, Oct 2026)
+        </a><br>
+        <label id="asof-label">As-of date:
+          <input type="date" id="asOf" value="2026-10-27"
                  style="border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:#EDF2EC;border-radius:6px;padding:4px 8px;font:inherit;color-scheme:dark">
         </label>
       </div>
@@ -96,67 +110,64 @@ footer .f-in{max-width:1180px;margin:0 auto;line-height:1.7}
 </header>
 <nav class="tabs" role="navigation" aria-label="Sections">
   <div class="tabs-inner">
-    <a href="#kpis">KPI 三态</a>
-    <a href="#gates">门控看板</a>
-    <a href="#risks">风险灯</a>
-    <a href="#scenarios">三情景模型</a>
-    <a href="#calendar">日历锚点</a>
-    <a href="#seed">Phase 0 种子</a>
+    <a href="#kpis" data-tab="kpis">KPI Three-State</a>
+    <a href="#gates" data-tab="gates">Gate Dashboard</a>
+    <a href="#risks" data-tab="risks">Risk Lights</a>
+    <a href="#scenarios" data-tab="scenarios">Scenario Model</a>
+    <a href="#calendar" data-tab="calendar">Calendar Anchors</a>
+    <a href="#seed" data-tab="seed">Phase 0 Seed</a>
   </div>
 </nav>
 <main>
   <section id="kpis">
-    <div class="band-tag">A.6 基线 / H2 2026 目标 / 红线</div>
-    <h2>KPI 三态<small>演示快照 = Phase 0 基线口径（1H26 已观测 + 未观测留白）</small></h2>
+    <div class="band-tag" id="kpis-tag">A.6 Baseline / H2 2026 target / Redline</div>
+    <h2 id="kpis-title">KPI Three-State<small id="kpis-sub">Demo snapshot = Phase 0 baseline (1H26 observed + unobserved left blank)</small></h2>
     <div class="grid kpi-grid" id="kpi-grid"></div>
   </section>
   <section id="gates">
-    <div class="band-tag">A.3 门控</div>
-    <h2>门控看板<small>go / conditional / no-go · 红线与 anyOf 组联动</small></h2>
+    <div class="band-tag" id="gates-tag">A.3 Gates</div>
+    <h2 id="gates-title">Gate Dashboard<small id="gates-sub">go / conditional / no-go · redlines &amp; anyOf groups</small></h2>
     <div id="gate-panels"></div>
   </section>
   <section id="risks">
-    <div class="band-tag">A.4 风险触发器</div>
-    <h2>风险灯<small>未观测不误报 · 窗口未到期 → watch</small></h2>
+    <div class="band-tag" id="risks-tag">A.4 Risk Triggers</div>
+    <h2 id="risks-title">Risk Lights<small id="risks-sub">Unobserved never fires · window not reached → watch</small></h2>
     <div id="risk-panels"></div>
   </section>
   <section id="scenarios">
-    <div class="band-tag">A.2 三情景</div>
-    <h2>三情景模型<small>140 ha pipeline · 收入上限口径</small></h2>
+    <div class="band-tag" id="scenarios-tag">A.2 Three Scenarios</div>
+    <h2 id="scenarios-title">Scenario Model<small id="scenarios-sub">140 ha pipeline · revenue ceiling basis</small></h2>
     <div class="panel">
       <table id="scenario-table"></table>
       <div class="note-box" id="scenario-note"></div>
     </div>
   </section>
   <section id="calendar">
-    <div class="band-tag">A.5 日历锚点</div>
-    <h2>日历时间轴<small>相对 asOf 倒计时</small></h2>
+    <div class="band-tag" id="calendar-tag">A.5 Calendar Anchors</div>
+    <h2 id="calendar-title">Calendar Timeline<small id="calendar-sub">Countdown to as-of date</small></h2>
     <div class="panel"><ul class="tl" id="cal-list"></ul></div>
   </section>
   <section id="seed">
-    <div class="band-tag">A.1 实体模型</div>
-    <h2>Phase 0 种子<small>结构先行 · 责任人/期限由 Phase 1 租户审计回填</small></h2>
+    <div class="band-tag" id="seed-tag">A.1 Entity Model</div>
+    <h2 id="seed-title">Phase 0 Seed<small id="seed-sub">Structure first · owners/dates backfilled in Phase 1 tenant audit</small></h2>
     <div class="panel">
-      <h3>Top 20 成本障碍</h3>
+      <h3 id="barriers-title">Top 20 Cost Barriers</h3>
       <table id="barrier-table"></table>
     </div>
     <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))">
       <div class="panel">
-        <h3>140 ha Pipeline 骨架</h3>
+        <h3 id="pipeline-title">140 ha Pipeline Skeleton</h3>
         <div id="pipeline-box" style="font-size:13px;line-height:2"></div>
       </div>
       <div class="panel">
-        <h3>四个 Squad（Week 1 任命 Lead）</h3>
+        <h3 id="squads-title">Four Squads (Week 1 Lead appointed)</h3>
         <table id="squad-table"></table>
       </div>
     </div>
   </section>
 </main>
 <footer>
-  <div class="f-in">
-    审计规则：A.6 不可变常量禁止覆盖，只能版本化（改 version + 审计留痕）。引擎启动与每次渲染前执行 selfCheck。<br>
-    权威来源：KIJA_CEO_改革分析与落地方案.md（v0.9，2026-10-25）· 数据层 data/*.js · 引擎 engine/core.js · 测试 tests/rules.test.js
-  </div>
+  <div class="f-in" id="footer-text"></div>
 </footer>
 
 <script src="data/constants.js"></script>
@@ -169,147 +180,679 @@ footer .f-in{max-width:1180px;margin:0 auto;line-height:1.7}
 <script src="engine/core.js"></script>
 <script>
 (function () {
-  'use strict';
-  const K = window.KPIJA;
-  const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-  const fmt = (v, unit) => v == null ? '—' : Number(v).toLocaleString('en-US') + (unit || '');
+'use strict';
 
-  const asOfInput = document.getElementById('asOf');
-  const demo = K.demoSnapshot;
+/* ============ I18N DICTIONARY ============ */
+const I18N = {
+  en: {
+    _meta: { hdSub: 'Reform analysis & delivery plan v0.9 · Gates / KPI three-state / Risk triggers / Scenarios / Calendar',
+             asofLabel: 'As-of date:' },
+    tabs: { kpis: 'KPI Three-State', gates: 'Gate Dashboard', risks: 'Risk Lights',
+            scenarios: 'Scenario Model', calendar: 'Calendar Anchors', seed: 'Phase 0 Seed' },
+    sections: {
+      kpis: { tag: 'A.6 Baseline / H2 2026 target / Redline', title: 'KPI Three-State',
+              sub: 'Demo snapshot = Phase 0 baseline (1H26 observed + unobserved left blank)' },
+      gates: { tag: 'A.3 Gates', title: 'Gate Dashboard', sub: 'go / conditional / no-go · redlines & anyOf groups' },
+      risks: { tag: 'A.4 Risk Triggers', title: 'Risk Lights', sub: 'Unobserved never fires · window not reached → watch' },
+      scenarios: { tag: 'A.2 Three Scenarios', title: 'Scenario Model', sub: '140 ha pipeline · revenue ceiling basis' },
+      calendar: { tag: 'A.5 Calendar Anchors', title: 'Calendar Timeline', sub: 'Countdown to as-of date' },
+      seed: { tag: 'A.1 Entity Model', title: 'Phase 0 Seed',
+              sub: 'Structure first · owners/dates backfilled in Phase 1 tenant audit' }
+    },
+    ui: {
+      baseline: 'Baseline', target: 'Target', redline: 'Redline', noRedline: 'No redline',
+      periods: ' periods', unobserved: 'Unobserved', observed: 'Observed',
+      check: 'Check', threshold: 'Threshold', actual: 'Actual', status: 'Status',
+      risk: 'Risk', severity: 'Severity', window: 'Window', conditions: 'Conditions',
+      triggers: 'Triggers (A.4)', guardrails: 'Guardrails',
+      pass: 'pass', fail: 'fail', fired: 'TRIGGERED', ok: 'OK', watch: 'WATCH',
+      normal: 'Normal', response: 'Response actions',
+      metricBreached: 'breached', metricSafe: 'within limit', metricUnobs: 'not observed',
+      eventDriven: '(event-driven)',
+      scenario: 'Scenario', convRate: 'Conv. rate', convHa: 'Converted ha',
+      newRev: 'New revenue', fullYear: 'Full year', gapToTarget: 'Gap to Rp3,750bn',
+      closesGap: 'Closes H2 gap', yes: 'Yes', no: 'No',
+      daysLeft: 'left', daysLate: 'overdue', recurring: 'recurring:',
+      param: 'Parameters', h2Gap: 'H2 gap', reval: 'Revaluation cadence',
+      num: '#', category: 'Category', barrier: 'Barrier', owner: 'Owner', due: 'Due',
+      resolvable: 'Resolvable in 90d', tbd: 'TBD', pending: 'to be filled',
+      squad: 'Squad', lead: 'Lead', focus: 'Focus',
+      total: 'Total', hasSponsor: 'With named sponsor',
+      loi: 'LOI', mou: 'MOU', verbal: 'Verbal', uncontacted: 'Uncontacted',
+      selfCheck: 'A.6 self-check', engine: 'Engine', data: 'Data',
+      demoLabel: 'Phase 0 demo snapshot',
+      footer: 'Immutable A.6 constants must not be overridden — only versioned (bump version + audit trail). selfCheck runs at engine boot and before every render.<br>Authoritative source: KIJA_CEO_改革分析与落地方案.md (v0.9, 2026-10-25) · data layer data/*.js · engine engine/core.js · tests tests/rules.test.js'
+    },
+    kpi: {
+      marketing_sales: 'Marketing sales signings',
+      pipeline_conversion: '140 ha pipeline conversion (LOI)',
+      infra_revenue_growth: 'Infrastructure (recurring) revenue growth',
+      power_revenue_growth: 'Power segment revenue growth',
+      services_revenue_growth: 'Services segment revenue growth',
+      tenant_satisfaction: 'Tenant satisfaction',
+      cash: 'Cash',
+      net_leverage: 'Net debt / EBITDA',
+      ebitda_interest: 'EBITDA / Interest',
+      automation: 'Admin process automation',
+      kik_dividend: 'KIK dividend visibility',
+      recurring_exjv_growth: 'Recurring growth ex-JV dividend'
+    },
+    gate: {
+      G1: 'Phase 1 gate: baseline + tenant audit',
+      G2: 'Phase 2 gate: service desk + pipeline harvest',
+      G3: 'Phase 3 gate: capital & financing + AI',
+      D365: 'Annual gate (D365)'
+    },
+    check: {
+      g1_visits: 'Tenant visits completed',
+      g1_barriers_assigned: 'Top-20 barriers: each with owner + due',
+      g1_barriers_90d: 'Barriers resolvable within 90 days',
+      g1_pipeline_sponsor: '140 ha with named sponsor',
+      g1_cfo_review: 'CFO sign-off on three-scenario model',
+      g2_secondment: 'Service desk secondment filled',
+      g2_kpi_bound: 'Seconded staff KPIs 100% tied to tenant-side metrics',
+      g2_loi: '140 ha LOI coverage',
+      g2_survey_baseline: 'Satisfaction baseline scored (response ≥60%)',
+      g2_dc_screening: 'Data centre parcels pass screening',
+      g2_forum_terms: 'Forum project enters term negotiation',
+      g2_h2_sales: 'H2 marketing sales',
+      g2_redline: 'End-Nov LOI <40 ha',
+      g3_termsheets: 'Term sheets signed (incl. financing LOIs)',
+      g3_financing: 'Institutions in financing dialogue',
+      g3_jv_termsheet: 'JV enters term negotiation',
+      g3_ai_flows: 'AI flows live',
+      g3_pilots: 'Education/health pilots signed',
+      g3_cash: 'Redline: cash',
+      g3_leverage: 'Redline: net debt/EBITDA',
+      g3_ebitda_int: 'Redline: EBITDA/interest',
+      d365_recurring: 'Recurring (ex-JV) growth',
+      d365_satisfaction: 'Tenant satisfaction',
+      d365_cash: 'Cash',
+      d365_leverage: 'Net debt/EBITDA',
+      d365_kik: 'KIK dividend visibility'
+    },
+    risk: {
+      R1: 'US-China truce expiry / China+1 narrative weakened',
+      R2: 'H2 pipeline conversion fails',
+      R3: '1H26 loss not purely one-off',
+      R4: 'KIK dividend decline',
+      R5: 'Governance / related-party challenge (YPUP)',
+      R6: 'Service desk integration failure (KPIs absorbed by BU metrics)'
+    },
+    guardrail: {
+      GL_cash: 'Cash guardrail',
+      GL_leverage: 'Net leverage guardrail',
+      GL_ebitda_int: 'EBITDA/interest guardrail'
+    },
+    action: {
+      freeze_p2p3: 'Freeze P2/P3 capex',
+      freeze_jv: 'Freeze JV guarantees',
+      renegotiate: 'Renegotiate capex'
+    },
+    calendar: {
+      '2026-11-04': 'Cikarang ASEAN–China Forum',
+      '2026-11-10': 'T-minus 60 to truce expiry',
+      '2026-11-30': 'R2 trigger check + G1 gate',
+      '2027-01-10': 'US-China truce expiry (hard clock)',
+      '2027-03-31': 'D365 annual gate',
+      '2028-12-31': 'Admin automation 50% target year'
+    },
+    barrierCat: {
+      '能源电力': 'Energy & power', '水务': 'Water', '道路物流': 'Road & logistics',
+      '消防': 'Fire safety', '安保': 'Security', '环保合规': 'Environmental compliance',
+      '网络': 'Telecom', '通关': 'Customs', '人才培训': 'Talent & training',
+      '税务': 'Tax', '法务': 'Legal', '保险': 'Insurance'
+    },
+    squad: {
+      A: 'Tenant Growth', B: 'Infrastructure Growth', C: 'Capital & Financing', D: 'Ecosystem & Innovation'
+    },
+    msg: {
+      phase1Baseline: 'Baseline TBD in Phase 1',
+      notReported: 'Not reported',
+      belowRef: 'Below reference target',
+      noGoG1: 'Do not launch Phase 2 org reorg (no service-desk headcount) — close data gaps first; avoid org change built on dirty data',
+      noGoG2: 'Return to Phase 2: rebind service-desk KPIs + reprice pipeline; do not release Phase 3 financing resources',
+      noGoG3: 'Hold new financing commitments; CFO 30-day remediation plan; re-sequence P2/P3 projects against remaining resources',
+      noGoD365: 'Restate target basis to the Board; freeze non-essential capex; launch FY27 restructuring plan',
+      restateTargets: 'Restate target basis to the Board',
+      repricingBear: 'Reprice (subdivide / lease-to-buy / within-floor authority) + activate bear case + downgrade Rp3,750bn target to Board',
+      repricingBearShort: 'Reprice + bear case + downgrade Rp3,750bn to Board',
+      repricingOnly: 'Reprice (subdivide / lease-to-buy / within-floor authority)',
+      anyOfLoiSales: '(any of: g2_loi / H2 marketing sales)',
+      metLeq: 'Met (≤$1)',
+      metGe: 'Met (≥$1)',
+      metPlain: 'Met ($1)',
+      targetCurrent: 'Target $1, current $2',
+      belowTargetNotBreached: 'Target ≤$1, not met but within redline'
+    }
+  },
 
-  function render() {
-    const asOf = asOfInput.value || '2026-10-25';
-    const self = K.selfCheck();
-    document.getElementById('hd-meta').innerHTML =
-      'A.6 常量自检：<b style="color:' + (self.ok ? '#8FD3A8' : '#F0A08C') + '">' +
-      (self.ok ? 'PASS' : 'FAIL') + '</b> · ' + esc(self.baselineVersion) +
-      ' · 引擎 v' + esc(K.version) +
-      ' · 数据 ' + esc(demo.label || 'Phase 0 演示快照');
+  id: {
+    _meta: { hdSub: 'Analisis reformasi & rencana eksekusi v0.9 · Gerbang / Tiga-status KPI / Pemicu risiko / Skenario / Kalender',
+             asofLabel: 'Tanggal as-per:' },
+    tabs: { kpis: 'Tiga-Status KPI', gates: 'Dasbor Gerbang', risks: 'Lampu Risiko',
+            scenarios: 'Model Skenario', calendar: 'Jangkal Kalender', seed: 'Benih Fase 0' },
+    sections: {
+      kpis: { tag: 'A.6 Dasar / target H2 2026 / Garis merah', title: 'Tiga-Status KPI',
+              sub: 'Cuplikan demo = dasar Fase 0 (1H26 teramati + belum teramati dibiarkan kosong)' },
+      gates: { tag: 'A.3 Gerbang', title: 'Dasbor Gerbang', sub: 'go / conditional / no-go · garis merah & grup anyOf' },
+      risks: { tag: 'A.4 Pemicu Risiko', title: 'Lampu Risiko', sub: 'Belum teramati tidak memicu · jendela belum tiba → watch' },
+      scenarios: { tag: 'A.2 Tiga Skenario', title: 'Model Skenario', sub: '140 ha pipeline · basis plafon pendapatan' },
+      calendar: { tag: 'A.5 Jangkal Kalender', title: 'Linimasa Kalender', sub: 'Hitung mundur ke tanggal as-per' },
+      seed: { tag: 'A.1 Model Entitas', title: 'Benih Fase 0',
+              sub: 'Struktur dulu · penanggung jawab/tanggal diisi saat audit penyewa Fase 1' }
+    },
+    ui: {
+      baseline: 'Dasar', target: 'Target', redline: 'Garis merah', noRedline: 'Tanpa garis merah',
+      periods: ' periode', unobserved: 'Belum teramati', observed: 'Teramati',
+      check: 'Pemeriksaan', threshold: 'Ambang', actual: 'Aktual', status: 'Status',
+      risk: 'Risiko', severity: 'Tingkat', window: 'Jendela', conditions: 'Kondisi',
+      triggers: 'Pemicu (A.4)', guardrails: 'Pengaman',
+      pass: 'lulus', fail: 'gagal', fired: 'TERPICU', ok: 'AMAN', watch: 'WASPADA',
+      normal: 'Normal', response: 'Tindakan respons',
+      metricBreached: 'terlampaui', metricSafe: 'sesuai batas', metricUnobs: 'belum teramati',
+      eventDriven: '(berbasis peristiwa)',
+      scenario: 'Skenario', convRate: 'Tingkat konversi', convHa: 'Ha dikonversi',
+      newRev: 'Pendapatan baru', fullYear: 'Setahun penuh', gapToTarget: 'Selisih ke Rp3.750 miliar',
+      closesGap: 'Tutup celah H2', yes: 'Ya', no: 'Tidak',
+      daysLeft: 'lagi', daysLate: 'terlambat', recurring: 'rutin:',
+      param: 'Parameter', h2Gap: 'Celah H2', reval: 'Siklus revaluasi',
+      num: '#', category: 'Kategori', barrier: 'Hambatan', owner: 'PJ', due: 'Jatuh tempo',
+      resolvable: 'Selesai <90 hari', tbd: 'TBD', pending: 'diisi',
+      squad: 'Skuad', lead: 'Ketua', focus: 'Fokus',
+      total: 'Total', hasSponsor: 'Ada sponsor jelas',
+      loi: 'LOI', mou: 'MOU', verbal: 'Lisan', uncontacted: 'Belum dihubungi',
+      selfCheck: 'Self-check A.6', engine: 'Mesin', data: 'Data',
+      demoLabel: 'Cuplikan demo Fase 0',
+      footer: 'Konstanta A.6 yang tidak boleh diubah dilarang ditimpa — hanya versi (naikkan versi + jejak audit). self-check berjalan saat mesin start dan sebelum tiap render.<br>Sumber otoritatif: KIJA_CEO_改革分析与落地方案.md (v0.9, 2026-10-25) · lapisan data data/*.js · mesin engine/core.js · tes tests/rules.test.js'
+    },
+    kpi: {
+      marketing_sales: 'Penandatanganan penjualan pemasaran',
+      pipeline_conversion: 'Konversi pipeline 140 ha (LOI)',
+      infra_revenue_growth: 'Pertumbuhan pendapatan infrastruktur (recurring)',
+      power_revenue_growth: 'Pertumbuhan pendapatan segmen kelistrikan',
+      services_revenue_growth: 'Pertumbuhan pendapatan segmen jasa',
+      tenant_satisfaction: 'Kepuasan penyewa',
+      cash: 'Kas',
+      net_leverage: 'Utang bersih / EBITDA',
+      ebitda_interest: 'EBITDA / Bunga',
+      automation: 'Otomatisasi proses administrasi',
+      kik_dividend: 'Visibilitas dividen KIK',
+      recurring_exjv_growth: 'Pertumbuhan recurring di luar dividen JV'
+    },
+    gate: {
+      G1: 'Gerbang Fase 1: dasar + audit penyewa',
+      G2: 'Gerbang Fase 2: meja layanan + panen pipeline',
+      G3: 'Gerbang Fase 3: modal & pembiayaan + AI',
+      D365: 'Gerbang tahunan (D365)'
+    },
+    check: {
+      g1_visits: 'Kunjungan penyewa selesai',
+      g1_barriers_assigned: '20 hambatan teratas: tiap-tiap ada PJ + jatuh tempo',
+      g1_barriers_90d: 'Hambatan yang selesai dalam 90 hari',
+      g1_pipeline_sponsor: '140 ha dengan sponsor jelas',
+      g1_cfo_review: 'CFO menyetujui model tiga-skenario',
+      g2_secondment: 'Pejabat pinjaman meja layanan terisi',
+      g2_kpi_bound: 'KPI staf pinjaman 100% terikat metrik sisi penyewa',
+      g2_loi: 'Cakupan LOI 140 ha',
+      g2_survey_baseline: 'Baseline kepuasan terukur (respons ≥60%)',
+      g2_dc_screening: 'Paket lahan pusat data lolos skrining',
+      g2_forum_terms: 'Proyek forum masuk negosiasi istilah',
+      g2_h2_sales: 'Penjualan pemasaran H2',
+      g2_redline: 'Akhir Nov LOI <40 ha',
+      g3_termsheets: 'Term sheet ditandatangani (termasuk LOI pembiayaan)',
+      g3_financing: 'Lembaga dalam dialog pembiayaan',
+      g3_jv_termsheet: 'JV masuk negosiasi istilah',
+      g3_ai_flows: 'Alur AI aktif',
+      g3_pilots: 'Pilot pendidikan/kesehatan ditandatangani',
+      g3_cash: 'Garis merah: kas',
+      g3_leverage: 'Garis merah: utang bersih/EBITDA',
+      g3_ebitda_int: 'Garis merah: EBITDA/bunga',
+      d365_recurring: 'Pertumbuhan recurring (di luar JV)',
+      d365_satisfaction: 'Kepuasan penyewa',
+      d365_cash: 'Kas',
+      d365_leverage: 'Utang bersih/EBITDA',
+      d365_kik: 'Visibilitas dividen KIK'
+    },
+    risk: {
+      R1: 'Berakhirnya gencatan AS-China / narasi China+1 melemah',
+      R2: 'Konversi pipeline H2 gagal',
+      R3: 'Rugi 1H26 bukan murni one-off',
+      R4: 'Penurunan dividen KIK',
+      R5: 'Tantangan tata kelola / transaksi berelasi (YPUP)',
+      R6: 'Kegagalan integrasi meja layanan (KPI ditelan metrik BU)'
+    },
+    guardrail: {
+      GL_cash: 'Pengaman kas',
+      GL_leverage: 'Pengaman rasio utang bersih',
+      GL_ebitda_int: 'Pengaman EBITDA/bunga'
+    },
+    action: {
+      freeze_p2p3: 'Bekukan capex P2/P3',
+      freeze_jv: 'Bekukan jaminan JV',
+      renegotiate: 'Negosiasi ulang capex'
+    },
+    calendar: {
+      '2026-11-04': 'Forum ASEAN–China Cikarang',
+      '2026-11-10': 'H-60 sebelum gencatan berakhir',
+      '2026-11-30': 'Pemeriksaan pemicu R2 + gerbang G1',
+      '2027-01-10': 'Gencatan AS-China berakhir (jam keras)',
+      '2027-03-31': 'Gerbang tahunan D365',
+      '2028-12-31': 'Tahun target otomatisasi administrasi 50%'
+    },
+    barrierCat: {
+      '能源电力': 'Energi & listrik', '水务': 'Air', '道路物流': 'Jalan & logistik',
+      '消防': 'Pemadam kebakaran', '安保': 'Keamanan', '环保合规': 'Kepatuhan lingkungan',
+      '网络': 'Telekomunikasi', '通关': 'Pabean', '人才培训': 'Talenta & pelatihan',
+      '税务': 'Perpajakan', '法务': 'Hukum', '保险': 'Asuransi'
+    },
+    squad: {
+      A: 'Pertumbuhan Penyewa', B: 'Pertumbuhan Infrastruktur', C: 'Modal & Pembiayaan', D: 'Ekosistem & Inovasi'
+    },
+    msg: {
+      phase1Baseline: 'Dasar ditetapkan pada Fase 1',
+      notReported: 'Belum dilaporkan',
+      belowRef: 'Di bawah target referensi',
+      noGoG1: 'Jangan luncurkan reorganisasi Fase 2 (tanpa formasi meja layanan) — tutup kekosongan data dulu; hindari perubahan organisasi di atas data yang buruk',
+      noGoG2: 'Kembali ke Fase 2: ikat ulang KPI meja layanan + repricing pipeline; jangan lepas sumber pembiayaan Fase 3',
+      noGoG3: 'Tahan komitmen pembiayaan baru; rencana perbaikan 30 hari oleh CFO; urut ulang proyek P2/P3 sesuai sisa sumber daya',
+      noGoD365: 'Nyatakan kembali dasar target kepada Direksi; bekukan capex non-esensial; luncurkan rencana restrukturisasi FY27',
+      restateTargets: 'Nyatakan kembali dasar target kepada Direksi',
+      repricingBear: 'Reprice (pecah lahan / sewa-beli / wewenang dalam lantai) + aktifkan skenario bear + turunkan target Rp3.750 miliar ke Direksi',
+      repricingBearShort: 'Reprice + skenario bear + turunkan Rp3.750 miliar ke Direksi',
+      repricingOnly: 'Reprice (pecah lahan / sewa-beli / wewenang dalam lantai)',
+      anyOfLoiSales: '(salah satu: g2_loi / penjualan pemasaran H2)',
+      metLeq: 'Tercapai (≤$1)',
+      metGe: 'Tercapai (≥$1)',
+      metPlain: 'Tercapai ($1)',
+      targetCurrent: 'Target $1, saat ini $2',
+      belowTargetNotBreached: 'Target ≤$1, belum tercapai tapi masih di atas garis merah'
+    }
+  },
 
-    /* ---- KPI ---- */
-    const rows = K.kpiEvaluate(demo.metrics, asOf);
-    document.getElementById('kpi-grid').innerHTML = rows.map((r) => {
-      const unit = r.unit || '';
-      const val = r.value == null ? '—' : fmt(r.value, unit === '%' ? '' : '') ;
-      const valHtml = r.value == null ? '—' : Number(r.value).toLocaleString('en-US') + (unit ? ' <small>' + esc(unit) + '</small>' : '');
-      const baseTxt = r.baseline && r.baseline.value != null ? '基线 ' + fmt(r.baseline.value) : '基线 —';
-      const tgtTxt = r.target && typeof r.target === 'object'
-        ? '目标 [' + r.target.range[0] + ', ' + r.target.range[1] + ']'
-        : (r.target != null ? '目标 ' + fmt(r.target) : '目标 —');
-      const redTxt = r.redline != null ? '红线 ' + fmt(r.redline.value) + (r.redline.streak ? ' ×' + r.redline.streak + ' 期' : '') : '无红线';
-      return '<div class="kpi ' + r.status + '">' +
-        '<div class="k-name">' + esc(r.name) + '</div>' +
-        '<div class="k-val">' + valHtml + '</div>' +
-        '<div class="k-meta">' + baseTxt + ' · ' + tgtTxt + '<br>' + redTxt + '<br>' + esc(r.detail) + '</div>' +
-        '</div>';
-    }).join('');
+  zh: {
+    _meta: { hdSub: '改革分析与落地方案 v0.9 · 门控 / KPI 三态 / 风险触发器 / 三情景 / 日历',
+             asofLabel: '评估基准日：' },
+    tabs: { kpis: 'KPI 三态', gates: '门控看板', risks: '风险灯',
+            scenarios: '三情景模型', calendar: '日历锚点', seed: 'Phase 0 种子' },
+    sections: {
+      kpis: { tag: 'A.6 基线 / H2 2026 目标 / 红线', title: 'KPI 三态',
+              sub: '演示快照 = Phase 0 基线口径（1H26 已观测 + 未观测留白）' },
+      gates: { tag: 'A.3 门控', title: '门控看板', sub: 'go / conditional / no-go · 红线与 anyOf 组联动' },
+      risks: { tag: 'A.4 风险触发器', title: '风险灯', sub: '未观测不误报 · 窗口未到期 → watch' },
+      scenarios: { tag: 'A.2 三情景', title: '三情景模型', sub: '140 ha pipeline · 收入上限口径' },
+      calendar: { tag: 'A.5 日历锚点', title: '日历时间轴', sub: '相对 asOf 倒计时' },
+      seed: { tag: 'A.1 实体模型', title: 'Phase 0 种子',
+              sub: '结构先行 · 责任人/期限由 Phase 1 租户审计回填' }
+    },
+    ui: {
+      baseline: '基线', target: '目标', redline: '红线', noRedline: '无红线',
+      periods: ' 期', unobserved: '未观测', observed: '已观测',
+      check: '检查项', threshold: '阈值', actual: '实际', status: '状态',
+      risk: '风险', severity: '级别', window: '窗口', conditions: '条件',
+      triggers: '触发器（A.4）', guardrails: '护栏',
+      pass: 'pass', fail: 'fail', fired: '已触发', ok: '正常', watch: '观察',
+      normal: '正常', response: '响应动作',
+      metricBreached: '触发', metricSafe: '未越线', metricUnobs: '未观测',
+      eventDriven: '(事件驱动)',
+      scenario: '情景', convRate: '转化率', convHa: '转化面积',
+      newRev: '新增收入', fullYear: '全年合计', gapToTarget: '距 3,750 bn',
+      closesGap: '补 H2 缺口', yes: '是', no: '否',
+      daysLeft: '天', daysLate: '天', recurring: '周期：',
+      param: '参数', h2Gap: 'H2 缺口', reval: '重估节奏',
+      num: '#', category: '类目', barrier: '障碍', owner: '责任人', due: '期限',
+      resolvable: '90 天可解', tbd: '待定', pending: '待回填',
+      squad: 'Squad', lead: 'Lead', focus: 'Focus',
+      total: '总量', hasSponsor: '有明确 sponsor',
+      loi: 'LOI', mou: 'MOU', verbal: '口头', uncontacted: '未接触',
+      selfCheck: 'A.6 常量自检', engine: '引擎', data: '数据',
+      demoLabel: 'Phase 0 演示快照',
+      footer: '审计规则：A.6 不可变常量禁止覆盖，只能版本化（改 version + 审计留痕）。引擎启动与每次渲染前执行 selfCheck。<br>权威来源：KIJA_CEO_改革分析与落地方案.md（v0.9，2026-10-25）· 数据层 data/*.js · 引擎 engine/core.js · 测试 tests/rules.test.js'
+    },
+    kpi: {
+      marketing_sales: '营销销售签约',
+      pipeline_conversion: '140 ha Pipeline 转化（LOI）',
+      infra_revenue_growth: '基建（recurring）收入增速',
+      power_revenue_growth: '电力分部收入增速',
+      services_revenue_growth: '服务分部收入增速',
+      tenant_satisfaction: '租户满意度',
+      cash: '现金',
+      net_leverage: '净债务/EBITDA',
+      ebitda_interest: 'EBITDA/利息',
+      automation: '行政流程自动化',
+      kik_dividend: 'KIK 分红能见度',
+      recurring_exjv_growth: '剔除 JV 分红的 recurring 增速'
+    },
+    gate: {
+      G1: 'Phase 1 验收：基线 + 租户审计',
+      G2: 'Phase 2 验收：服务台 + Pipeline 收割',
+      G3: 'Phase 3 验收：资本与融资 + AI',
+      D365: '年度验收（D365）'
+    },
+    check: {
+      g1_visits: '租户走访完成率',
+      g1_barriers_assigned: 'Top 20 障碍清单：每条有责任人+期限',
+      g1_barriers_90d: '障碍 90 天内可解决占比',
+      g1_pipeline_sponsor: '140 ha 有明确 sponsor 占比',
+      g1_cfo_review: '三情景模型 CFO 评审通过',
+      g2_secondment: '服务台借调到位率',
+      g2_kpi_bound: '借调人员 KPI 100% 挂租户侧指标',
+      g2_loi: '140 ha LOI 覆盖',
+      g2_survey_baseline: '满意度基线出分（回收率≥60%）',
+      g2_dc_screening: '数据中心地块通过初筛',
+      g2_forum_terms: '论坛项目进入条款谈判',
+      g2_h2_sales: 'H2 营销销售',
+      g2_redline: '11 月底 LOI <40 ha',
+      g3_termsheets: 'term sheet 签署数（含融资伙伴意向函）',
+      g3_financing: '融资对话机构数',
+      g3_jv_termsheet: 'JV 进入条款谈判',
+      g3_ai_flows: 'AI 流程上线数',
+      g3_pilots: '教育/医疗 pilot 签约数',
+      g3_cash: '护栏：现金',
+      g3_leverage: '护栏：净债务/EBITDA',
+      g3_ebitda_int: '护栏：EBITDA/利息',
+      d365_recurring: 'recurring（剔 JV 分红）增速',
+      d365_satisfaction: '租户满意度',
+      d365_cash: '现金',
+      d365_leverage: '净债务/EBITDA',
+      d365_kik: 'KIK 分红能见度'
+    },
+    risk: {
+      R1: '美中停火到期 / China+1 叙事受损',
+      R2: 'H2 pipeline 转化不及格',
+      R3: '1H26 亏损非纯一次性',
+      R4: 'KIK 分红下滑',
+      R5: '治理/关联交易质疑（YPUP）',
+      R6: '服务台整合失败（KPI 被 BU 口径吞并）'
+    },
+    guardrail: {
+      GL_cash: '现金护栏',
+      GL_leverage: '净杠杆护栏',
+      GL_ebitda_int: 'EBITDA/利息护栏'
+    },
+    action: {
+      freeze_p2p3: '冻结 P2/P3 capex',
+      freeze_jv: 'JV 担保冻结',
+      renegotiate: '重议 capex'
+    },
+    calendar: {
+      '2026-11-04': 'Cikarang 论坛项目',
+      '2026-11-10': '停火到期前 60 天',
+      '2026-11-30': 'R2 触发器检查日 + G1 门控',
+      '2027-01-10': '美中停火到期（硬时钟）',
+      '2027-03-31': 'D365 年度验收',
+      '2028-12-31': '行政流程自动化 50% 目标年'
+    },
+    barrierCat: {
+      '能源电力': '能源电力', '水务': '水务', '道路物流': '道路物流',
+      '消防': '消防', '安保': '安保', '环保合规': '环保合规',
+      '网络': '网络', '通关': '通关', '人才培训': '人才培训',
+      '税务': '税务', '法务': '法务', '保险': '保险'
+    },
+    squad: {
+      A: '租户增长', B: '基建增长', C: '资本与融资', D: '生态与创新'
+    },
+    msg: {
+      phase1Baseline: '基线待 Phase 1 测定',
+      notReported: '未填报',
+      belowRef: '未达参考目标',
+      noGoG1: '不启动 Phase 2 组织调整（服务台编制不批），先补数据——避免组织变革建立在脏数据上',
+      noGoG2: '回炉 Phase 2：服务台 KPI 重挂 + pipeline 重定价，不释放 Phase 3 融资资源',
+      noGoG3: '暂缓新融资承诺，CFO 30 天补救计划；P2/P3 项目按剩余资源重排',
+      noGoD365: '向董事会重述目标口径；冻结非必要 capex；启动 FY27 重组计划',
+      restateTargets: '向董事会重述目标口径',
+      repricingBear: '定价重置（拆地块/先租后买/floor 内授权）+ 启动 bear 预案 + 向董事会下修 3,750 bn 目标',
+      repricingBearShort: '定价重置（拆地块/先租后买/floor 内授权）+ bear 预案 + 向董事会下修 3,750 bn',
+      repricingOnly: '定价重置（拆地块/先租后买/floor 内授权）',
+      anyOfLoiSales: '(任一满足：g2_loi / H2 营销销售)',
+      metLeq: '达标（≤$1）',
+      metGe: '达标（≥$1）',
+      metPlain: '达标（$1）',
+      targetCurrent: '目标 $1，当前 $2',
+      belowTargetNotBreached: '目标 ≤$1，未达标但未破线'
+    }
+  }
+};
 
-    /* ---- Gates ---- */
-    document.getElementById('gate-panels').innerHTML = K.data.gates.gates.map((g) => {
-      const r = K.gateEvaluate(g.id, demo.metrics, asOf);
-      const st = r.status;
-      const stLabel = { go: 'GO', conditional: 'CONDITIONAL', 'no-go': 'NO-GO' }[st];
-      const checks = r.checks.map((c) =>
-        '<tr><td>' + esc(c.label) + (c.groupLabel ? ' <span class="dim">' + esc(c.groupLabel) + '</span>' : '') + '</td>' +
+let LANG = localStorage.getItem('kija_lang') || 'en';
+if (!I18N[LANG]) LANG = 'en';
+
+function t(path) {
+  const parts = path.split('.');
+  let node = I18N[LANG];
+  for (const p of parts) {
+    if (node == null) return path;
+    node = node[p];
+  }
+  return node == null ? path : node;
+}
+function tData(dict, key, fallback) {
+  const d = I18N[LANG][dict];
+  return (d && d[key]) || fallback || key;
+}
+
+/* Translate dynamic Chinese detail/action strings produced by engine/core.js */
+function xlate(s) {
+  if (s == null) return s;
+  let out = String(s);
+  const m = I18N[LANG].msg;
+  if (!m) return out;
+  // Phrase-level replacements (order matters: longer first)
+  const phrases = [
+    ['基线待 Phase 1 测定', m.phase1Baseline],
+    ['未填报', m.notReported],
+    ['未达参考目标', m.belowRef],
+    ['不启动 Phase 2 组织调整（服务台编制不批），先补数据——避免组织变革建立在脏数据上', m.noGoG1],
+    ['回炉 Phase 2：服务台 KPI 重挂 + pipeline 重定价，不释放 Phase 3 融资资源', m.noGoG2],
+    ['暂缓新融资承诺，CFO 30 天补救计划；P2/P3 项目按剩余资源重排', m.noGoG3],
+    ['向董事会重述目标口径；冻结非必要 capex；启动 FY27 重组计划', m.noGoD365],
+    ['向董事会重述目标口径', m.restateTargets],
+    ['定价重置（拆地块/先租后买/floor 内授权）+ 启动 bear 预案 + 向董事会下修 3,750 bn 目标', m.repricingBear],
+    ['定价重置（拆地块/先租后买/floor 内授权）+ bear 预案 + 向董事会下修 3,750 bn', m.repricingBearShort],
+    ['定价重置（拆地块/先租后买/floor 内授权）', m.repricingOnly]
+  ];
+  for (const [zh, en] of phrases) {
+    out = out.split(zh).join(en);
+  }
+  // anyOf groupLabel: （任一满足：id / 中文 label）→ (any of: id / translated label)
+  out = out.replace(/（任一满足：([^）]+)）/g, function (whole, inner) {
+    const translated = inner.split('H2 营销销售').join(tData('check', 'g2_h2_sales', 'H2 marketing sales'));
+    return '(any of: ' + translated + ')';
+  });
+  // Pattern-based templates: $1 = captured value
+  out = out.replace(/达标（≤([^）]+)）/g, m.metLeq);
+  out = out.replace(/达标（≥([^）]+)）/g, m.metGe);
+  out = out.replace(/达标（([^）]+)）/g, m.metPlain);
+  out = out.replace(/目标 ([^，]+)，当前 ([^，]+)/g, m.targetCurrent);
+  out = out.replace(/目标 ≤([^，]+)，未达标但未破线/g, m.belowTargetNotBreached);
+  return out;
+}
+
+/* ============ RENDER ============ */
+const K = window.KPIJA;
+const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const fmt = (v, unit) => v == null ? '—' : Number(v).toLocaleString('en-US') + (unit || '');
+const asOfInput = document.getElementById('asOf');
+const demo = K.demoSnapshot;
+
+function applyLangStatic() {
+  document.documentElement.lang = LANG === 'zh' ? 'zh-CN' : LANG;
+  document.getElementById('hd-sub').textContent = t('_meta.hdSub');
+  document.getElementById('asof-label').innerHTML = t('_meta.asofLabel') +
+    ' <input type="date" id="asOf" value="2026-10-27" style="border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:#EDF2EC;border-radius:6px;padding:4px 8px;font:inherit;color-scheme:dark">';
+  // Re-bind asOf input after innerHTML replace
+  window._asOfInput = document.getElementById('asOf');
+  window._asOfInput.addEventListener('input', render);
+
+  // Tab labels
+  document.querySelectorAll('.tabs a').forEach(a => {
+    a.textContent = t('tabs.' + a.dataset.tab);
+  });
+  // Section labels
+  ['kpis','gates','risks','scenarios','calendar','seed'].forEach(s => {
+    document.getElementById(s + '-tag').textContent = t('sections.' + s + '.tag');
+    document.getElementById(s + '-title').innerHTML =
+      t('sections.' + s + '.title') + '<small>' + esc(t('sections.' + s + '.sub')) + '</small>';
+  });
+  document.getElementById('barriers-title').textContent = t('ui.noRedline') === 'No redline' ? 'Top 20 Cost Barriers' : 'Top 20 成本障碍';
+  document.getElementById('pipeline-title').textContent = LANG === 'zh' ? '140 ha Pipeline 骨架' : (LANG === 'id' ? 'Kerangka Pipeline 140 ha' : '140 ha Pipeline Skeleton');
+  document.getElementById('squads-title').textContent = LANG === 'zh' ? '四个 Squad（Week 1 任命 Lead）' : (LANG === 'id' ? 'Empat Skuad (Ketua ditunjuk Minggu 1)' : 'Four Squads (Week 1 Lead appointed)');
+  document.getElementById('footer-text').innerHTML = t('ui.footer');
+
+  // Lang buttons
+  document.querySelectorAll('#lang-switch button').forEach(b => {
+    b.classList.toggle('on', b.dataset.lang === LANG);
+  });
+}
+
+function render() {
+  const asOf = (window._asOfInput ? window._asOfInput.value : document.getElementById('asOf').value) || '2026-10-27';
+  const self = K.selfCheck();
+  const U = t('ui');
+  document.getElementById('hd-meta').innerHTML =
+    U.selfCheck + ': <b style="color:' + (self.ok ? '#8FD3A8' : '#F0A08C') + '">' +
+    (self.ok ? 'PASS' : 'FAIL') + '</b> · ' + esc(self.baselineVersion) +
+    ' · ' + U.engine + ' v' + esc(K.version) +
+    ' · ' + U.data + ' ' + esc(demo.label || U.demoLabel);
+
+  /* ---- KPI ---- */
+  const rows = K.kpiEvaluate(demo.metrics, asOf);
+  document.getElementById('kpi-grid').innerHTML = rows.map((r) => {
+    const kName = tData('kpi', r.id, r.name);
+    const unit = r.unit || '';
+    const valHtml = r.value == null ? '—' : Number(r.value).toLocaleString('en-US') + (unit ? ' <small>' + esc(unit) + '</small>' : '');
+    const baseTxt = r.baseline && r.baseline.value != null ? U.baseline + ' ' + fmt(r.baseline.value) : U.baseline + ' —';
+    const tgtTxt = r.target && typeof r.target === 'object'
+      ? U.target + ' [' + r.target.range[0] + ', ' + r.target.range[1] + ']'
+      : (r.target != null ? U.target + ' ' + fmt(r.target) : U.target + ' —');
+    const redTxt = r.redline != null ? U.redline + ' ' + fmt(r.redline.value) + (r.redline.streak ? ' ×' + r.redline.streak + U.periods : '') : U.noRedline;
+    return '<div class="kpi ' + r.status + '">' +
+      '<div class="k-name">' + esc(kName) + '</div>' +
+      '<div class="k-val">' + valHtml + '</div>' +
+      '<div class="k-meta">' + baseTxt + ' · ' + tgtTxt + '<br>' + redTxt + '<br>' + esc(xlate(r.detail || '')) + '</div>' +
+      '</div>';
+  }).join('');
+
+  /* ---- Gates ---- */
+  document.getElementById('gate-panels').innerHTML = K.data.gates.gates.map((g) => {
+    const r = K.gateEvaluate(g.id, demo.metrics, asOf);
+    const st = r.status;
+    const stLabel = { go: 'GO', conditional: 'CONDITIONAL', 'no-go': 'NO-GO' }[st];
+    const gName = tData('gate', g.id, g.name);
+    const checks = r.checks.map((c) => {
+      const cLabel = tData('check', c.id, c.label);
+      return '<tr><td>' + esc(cLabel) + (c.groupLabel ? ' <span class="dim">' + esc(xlate(c.groupLabel)) + '</span>' : '') + '</td>' +
         '<td class="mono">' + esc(c.expected) + '</td>' +
-        '<td class="mono">' + (c.observed ? fmt(c.actual) : '<span class="dim">未观测</span>') + '</td>' +
-        '<td>' + (c.observed ? (c.pass ? '<span class="chip go">pass</span>' : '<span class="chip nogo">fail</span>') : '<span class="chip na">未观测</span>') + '</td></tr>'
-      ).join('');
-      const rl = r.redline;
-      const rlHtml = rl ? (
-        '<tr><td>红线：' + esc(rl.label || rl.metric) + '</td><td class="mono">' + esc(rl.expected) + '</td>' +
-        '<td class="mono">' + (rl.actual != null ? fmt(rl.actual) : '未观测') + '</td>' +
-        '<td>' + (rl.fired ? '<span class="chip nogo">已触发</span>' : '<span class="chip go">未触发</span>') + '</td></tr>'
-      ) : '';
-      const actions = (r.actions || []).map((a) => ' · ' + esc(a.type ? a.type + '：' : '') + esc(a.text)).join('');
-      return '<div class="panel"><h3>' + esc(g.id) + ' ' + esc(g.name) +
-        ' <span class="dim" style="font-size:11px;font-weight:400">D' + esc(g.day) + ' / ' + esc(g.date) + '</span>' +
-        '<span class="chip ' + st + '">' + stLabel + '</span></h3>' +
-        '<table><thead><tr><th>检查项</th><th>阈值</th><th>实际</th><th>状态</th></tr></thead>' +
-        '<tbody>' + checks + rlHtml + '</tbody></table>' +
-        (actions ? '<div class="note-box">响应动作：' + actions.slice(1) + '</div>' : '') +
-        '</div>';
+        '<td class="mono">' + (c.observed ? fmt(c.actual) : '<span class="dim">' + U.unobserved + '</span>') + '</td>' +
+        '<td>' + (c.observed ? (c.pass ? '<span class="chip go">' + U.pass + '</span>' : '<span class="chip nogo">' + U.fail + '</span>') : '<span class="chip na">' + U.unobserved + '</span>') + '</td></tr>';
     }).join('');
+    const rl = r.redline;
+    const rlHtml = rl ? (
+      '<tr><td>' + U.redline + ': ' + esc(tData('check', rl.id, rl.label || rl.metric)) + '</td><td class="mono">' + esc(rl.expected) + '</td>' +
+      '<td class="mono">' + (rl.actual != null ? fmt(rl.actual) : U.unobserved) + '</td>' +
+      '<td>' + (rl.fired ? '<span class="chip nogo">' + U.fired + '</span>' : '<span class="chip go">' + U.ok + '</span>') + '</td></tr>'
+    ) : '';
+    const actions = (r.actions || []).map((a) => ' · ' + esc(a.type ? a.type + ': ' : '') + esc(xlate(a.text))).join('');
+    return '<div class="panel"><h3>' + esc(g.id) + ' ' + esc(gName) +
+      ' <span class="dim" style="font-size:11px;font-weight:400">D' + esc(g.day) + ' / ' + esc(g.date) + '</span>' +
+      '<span class="chip ' + st + '">' + stLabel + '</span></h3>' +
+      '<table><thead><tr><th>' + U.check + '</th><th>' + U.threshold + '</th><th>' + U.actual + '</th><th>' + U.status + '</th></tr></thead>' +
+      '<tbody>' + checks + rlHtml + '</tbody></table>' +
+      (actions ? '<div class="note-box">' + U.response + ': ' + actions.slice(1) + '</div>' : '') +
+      '</div>';
+  }).join('');
 
-    /* ---- Risks ---- */
-    const risk = K.riskEvaluate(demo.metrics, asOf);
-    const stChip = { fired: 'fired', watch: 'watch', ok: 'ok', unobservable: 'unobservable' };
-    const stLabel = { fired: 'FIRED', watch: 'WATCH', ok: 'OK', unobservable: '未观测' };
-    const riskRows = risk.risks.map((x) =>
-      '<tr><td><b>' + esc(x.id) + '</b> ' + esc(x.name) + (x.eventDriven ? ' <span class="dim">(事件驱动)</span>' : '') + '</td>' +
+  /* ---- Risks ---- */
+  const risk = K.riskEvaluate(demo.metrics, asOf);
+  const stChip = { fired: 'fired', watch: 'watch', ok: 'ok', unobservable: 'unobservable' };
+  const stLabel = { fired: U.fired, watch: U.watch, ok: U.ok, unobservable: U.unobserved };
+  const riskRows = risk.risks.map((x) => {
+    const rName = tData('risk', x.id, x.name);
+    return '<tr><td><b>' + esc(x.id) + '</b> ' + esc(rName) + (x.eventDriven ? ' <span class="dim">' + U.eventDriven + '</span>' : '') + '</td>' +
       '<td>' + esc(x.severity) + '</td><td class="mono">' + esc(x.window || '—') + '</td>' +
       '<td>' + x.conditions.map((c) =>
-        c.fired ? '<span class="chip fired">' + esc(c.metric) + ' 触发</span>'
-        : c.observed ? '<span class="chip ok">' + esc(c.metric) + ' 未越线</span>'
-        : '<span class="chip unobservable">' + esc(c.metric) + ' 未观测</span>'
+        c.fired ? '<span class="chip fired">' + esc(c.metric) + ' ' + U.metricBreached + '</span>'
+        : c.observed ? '<span class="chip ok">' + esc(c.metric) + ' ' + U.metricSafe + '</span>'
+        : '<span class="chip unobservable">' + esc(c.metric) + ' ' + U.metricUnobs + '</span>'
       ).join(' ') + '</td>' +
-      '<td>' + (x.status === 'unobservable' ? '<span class="chip unobservable">未观测</span>' : '<span class="chip ' + stChip[x.status] + '">' + stLabel[x.status] + '</span>') + '</td></tr>'
-    ).join('');
-    const guardRows = (risk.guardrails || []).map((g) =>
-      '<tr><td><b>G</b> ' + esc(g.name) + '</td><td class="mono">' + esc(g.expected) + '</td>' +
-      '<td class="mono">' + (g.observed ? fmt(g.actual) : '<span class="dim">未观测</span>') + '</td>' +
-      '<td>' + (g.fired ? '<span class="chip nogo">已触发</span>' : g.observed ? '<span class="chip ok">正常</span>' : '<span class="chip na">未观测</span>') + '</td></tr>'
-    ).join('');
-    document.getElementById('risk-panels').innerHTML =
-      '<div class="panel"><h3>触发器（A.4）</h3><table><thead><tr><th>风险</th><th>级别</th><th>窗口</th><th>条件</th><th>状态</th></tr></thead><tbody>' + riskRows + '</tbody></table></div>' +
-      '<div class="panel"><h3>护栏（Guardrails）</h3><table><thead><tr><th>护栏</th><th>阈值</th><th>实际</th><th>状态</th></tr></thead><tbody>' + guardRows + '</tbody></table></div>';
+      '<td>' + (x.status === 'unobservable' ? '<span class="chip unobservable">' + U.unobserved + '</span>' : '<span class="chip ' + stChip[x.status] + '">' + stLabel[x.status] + '</span>') + '</td></tr>';
+  }).join('');
+  const guardRows = (risk.guardrails || []).map((g) => {
+    const gName = tData('guardrail', g.id, g.name);
+    return '<tr><td><b>G</b> ' + esc(gName) + '</td><td class="mono">' + esc(g.expected) + '</td>' +
+      '<td class="mono">' + (g.observed ? fmt(g.actual) : '<span class="dim">' + U.unobserved + '</span>') + '</td>' +
+      '<td>' + (g.fired ? '<span class="chip nogo">' + U.fired + '</span>' : g.observed ? '<span class="chip ok">' + U.normal + '</span>' : '<span class="chip na">' + U.unobserved + '</span>') + '</td></tr>';
+  }).join('');
+  document.getElementById('risk-panels').innerHTML =
+    '<div class="panel"><h3>' + U.triggers + '</h3><table><thead><tr><th>' + U.risk + '</th><th>' + U.severity + '</th><th>' + U.window + '</th><th>' + U.conditions + '</th><th>' + U.status + '</th></tr></thead><tbody>' + riskRows + '</tbody></table></div>' +
+    '<div class="panel"><h3>' + U.guardrails + '</h3><table><thead><tr><th>' + U.guardrails + '</th><th>' + U.threshold + '</th><th>' + U.actual + '</th><th>' + U.status + '</th></tr></thead><tbody>' + guardRows + '</tbody></table></div>';
 
-    /* ---- Scenarios ---- */
-    const sc = K.scenarioCompute();
-    const p = sc._params;
-    document.getElementById('scenario-table').innerHTML =
-      '<thead><tr><th>情景</th><th>转化率</th><th>转化面积</th><th>新增收入</th><th>全年合计</th><th>距 3,750 bn</th><th>补 H2 缺口</th></tr></thead><tbody>' +
-      ['bull', 'base', 'bear'].map((k) => {
-        const s = sc[k];
-        return '<tr><td><b>' + esc(s.label) + '</b></td><td class="mono">' + Math.round(s.conv * 100) + '%</td>' +
-          '<td class="mono">' + s.ha_converted + ' ha</td>' +
-          '<td class="mono">' + fmt(s.revenue_bn) + ' bn</td>' +
-          '<td class="mono">' + fmt(s.full_year_bn) + ' bn</td>' +
-          '<td class="mono">' + (s.gap_to_target_bn > 0 ? '差 ' + s.gap_to_target_bn + ' bn' : '已覆盖') + '</td>' +
-          '<td>' + (s.closes_h2_gap ? '<span class="chip go">是</span>' : '<span class="chip conditional">否</span>') + '</td></tr>';
-      }).join('') + '</tbody>';
-    document.getElementById('scenario-note').innerHTML =
-      '参数：' + p.pipeline_ha + ' ha × 10,000 sqm/ha × ' + Number(p.price_anchor_idr_per_sqm).toLocaleString('en-US') +
-      ' IDR/sqm（' + esc(p.price_anchor_source) + '）· H2 缺口 ' + fmt(p.h2_gap_bn) + ' bn · 重估节奏：' + esc(p.revaluation);
+  /* ---- Scenarios ---- */
+  const sc = K.scenarioCompute();
+  const p = sc._params;
+  document.getElementById('scenario-table').innerHTML =
+    '<thead><tr><th>' + U.scenario + '</th><th>' + U.convRate + '</th><th>' + U.convHa + '</th><th>' + U.newRev + '</th><th>' + U.fullYear + '</th><th>' + U.gapToTarget + '</th><th>' + U.closesGap + '</th></tr></thead><tbody>' +
+    ['bull', 'base', 'bear'].map((k) => {
+      const s = sc[k];
+      return '<tr><td><b>' + esc(s.label) + '</b></td><td class="mono">' + Math.round(s.conv * 100) + '%</td>' +
+        '<td class="mono">' + s.ha_converted + ' ha</td>' +
+        '<td class="mono">' + fmt(s.revenue_bn) + ' bn</td>' +
+        '<td class="mono">' + fmt(s.full_year_bn) + ' bn</td>' +
+        '<td class="mono">' + (s.gap_to_target_bn > 0 ? '— ' + s.gap_to_target_bn + ' bn' : (LANG === 'zh' ? '已覆盖' : (LANG === 'id' ? 'Tertutup' : 'Covered'))) + '</td>' +
+        '<td>' + (s.closes_h2_gap ? '<span class="chip go">' + U.yes + '</span>' : '<span class="chip conditional">' + U.no + '</span>') + '</td></tr>';
+    }).join('') + '</tbody>';
+  document.getElementById('scenario-note').innerHTML =
+    U.param + ': ' + p.pipeline_ha + ' ha × 10,000 sqm/ha × ' + Number(p.price_anchor_idr_per_sqm).toLocaleString('en-US') +
+    ' IDR/sqm (' + esc(p.price_anchor_source) + ') · ' + U.h2Gap + ' ' + fmt(p.h2_gap_bn) + ' bn · ' + U.reval + ': ' + esc(p.revaluation);
 
-    /* ---- Calendar ---- */
-    const cal = K.calendarUpcoming(asOf);
-    document.getElementById('cal-list').innerHTML = cal.map((i) => {
-      const dotCls = i.type === 'hard-clock' ? 'hard' : (i.type === 'gate' ? 'gate' : '');
-      const days = i.days_left == null ? '' :
-        (i.past ? '<span class="badge-days late">已过期 ' + (-i.days_left) + ' 天</span>'
-                : '<span class="badge-days">剩 ' + i.days_left + ' 天</span>');
-      return '<li class="' + (i.past ? 'past' : '') + '"><div class="tl-date">' + esc(i.date) + '</div>' +
-        '<div class="tl-dot ' + dotCls + '"></div><div><b>' + esc(i.label) + '</b> ' + days +
-        (i.recurring ? ' <span class="dim">(周期：' + esc(i.recurring) + ')</span>' : '') +
-        '<div class="tl-note">' + esc(i.note || '') + '</div></div></li>';
-    }).join('');
+  /* ---- Calendar ---- */
+  const cal = K.calendarUpcoming(asOf);
+  document.getElementById('cal-list').innerHTML = cal.map((i) => {
+    const dotCls = i.type === 'hard-clock' ? 'hard' : (i.type === 'gate' ? 'gate' : '');
+    const cLabel = tData('calendar', i.date, i.label);
+    const days = i.days_left == null ? '' :
+      (i.past ? '<span class="badge-days late">' + U.daysLate + ' ' + (-i.days_left) + ' ' + U.daysLeft + '</span>'
+              : '<span class="badge-days">' + i.days_left + ' ' + U.daysLeft + '</span>');
+    return '<li class="' + (i.past ? 'past' : '') + '"><div class="tl-date">' + esc(i.date) + '</div>' +
+      '<div class="tl-dot ' + dotCls + '"></div><div><b>' + esc(cLabel) + '</b> ' + days +
+      (i.recurring ? ' <span class="dim">(' + U.recurring + esc(i.recurring) + ')</span>' : '') +
+      '<div class="tl-note">' + esc(i.note || '') + '</div></div></li>';
+  }).join('');
 
-    /* ---- Seed ---- */
-    const B = K.data.seed.cost_barriers;
-    document.getElementById('barrier-table').innerHTML =
-      '<thead><tr><th>#</th><th>类目</th><th>障碍</th><th>责任人</th><th>期限</th><th>90 天可解</th></tr></thead><tbody>' +
-      B.map((b) =>
-        '<tr><td class="mono">' + b.no + '</td><td>' + esc(b.category) + '</td><td>' + esc(b.name) + '</td>' +
-        '<td class="dim">' + (b.owner || '待回填') + '</td><td class="dim">' + (b.due || '待回填') + '</td>' +
-        '<td class="dim">' + (b.resolvable_90d == null ? '待定' : String(b.resolvable_90d)) + '</td></tr>'
-      ).join('') + '</tbody>';
-    const pl = K.data.seed.pipeline;
-    const bs = pl.by_stage;
-    document.getElementById('pipeline-box').innerHTML =
-      '总量 <b>' + pl.total_ha + ' ha</b> · 有明确 sponsor：' + pl.with_sponsor_ha + ' ha<br>' +
-      'LOI ' + bs.loi + ' · MOU ' + bs.mou + ' · 口头 ' + bs.verbal + ' · 未接触 ' + bs.uncontacted + ' ha' +
-      '<br><span class="dim">Phase 1 按 LOI/MOU/口头/未接触 重分级；中国 BG 关联 ha 待标注。</span>';
-    document.getElementById('squad-table').innerHTML =
-      '<thead><tr><th>Squad</th><th>Lead</th><th>Focus</th></tr></thead><tbody>' +
-      K.data.seed.squads.map((s) =>
-        '<tr><td><b>' + esc(s.id) + '</b> ' + esc(s.name) + '</td><td>' + esc(s.lead) + '</td><td class="dim">' + esc(s.focus) + '</td></tr>'
-      ).join('') + '</tbody>';
-  }
+  /* ---- Seed ---- */
+  const B = K.data.seed.cost_barriers;
+  document.getElementById('barrier-table').innerHTML =
+    '<thead><tr><th>' + U.num + '</th><th>' + U.category + '</th><th>' + U.barrier + '</th><th>' + U.owner + '</th><th>' + U.due + '</th><th>' + U.resolvable + '</th></tr></thead><tbody>' +
+    B.map((b) =>
+      '<tr><td class="mono">' + b.no + '</td><td>' + esc(tData('barrierCat', b.category, b.category)) + '</td><td>' + esc(b.name) + '</td>' +
+      '<td class="dim">' + (b.owner || U.pending) + '</td><td class="dim">' + (b.due || U.pending) + '</td>' +
+      '<td class="dim">' + (b.resolvable_90d == null ? U.tbd : String(b.resolvable_90d)) + '</td></tr>'
+    ).join('') + '</tbody>';
+  const pl = K.data.seed.pipeline;
+  const bs = pl.by_stage;
+  document.getElementById('pipeline-box').innerHTML =
+    U.total + ' <b>' + pl.total_ha + ' ha</b> · ' + U.hasSponsor + ': ' + pl.with_sponsor_ha + ' ha<br>' +
+    U.loi + ' ' + bs.loi + ' · ' + U.mou + ' ' + bs.mou + ' · ' + U.verbal + ' ' + bs.verbal + ' · ' + U.uncontacted + ' ' + bs.uncontacted + ' ha' +
+    '<br><span class="dim">' + (LANG === 'zh' ? 'Phase 1 按 LOI/MOU/口头/未接触 重分级；中国 BG 关联 ha 待标注。' : (LANG === 'id' ? 'Fase 1 mereklasifikasi LOI/MOU/lisan/belum dihubungi; ha terkait China BG akan ditandai.' : 'Phase 1 reclassifies LOI/MOU/verbal/uncontacted; China-BG-linked ha to be flagged.')) + '</span>';
+  document.getElementById('squad-table').innerHTML =
+    '<thead><tr><th>' + U.squad + '</th><th>' + U.lead + '</th><th>' + U.focus + '</th></tr></thead><tbody>' +
+    K.data.seed.squads.map((s) =>
+      '<tr><td><b>' + esc(s.id) + '</b> ' + esc(tData('squad', s.id, s.name)) + '</td><td>' + esc(s.lead) + '</td><td class="dim">' + esc(s.focus) + '</td></tr>'
+    ).join('') + '</tbody>';
+}
 
-  asOfInput.addEventListener('input', render);
+/* ============ LANG SWITCH ============ */
+document.getElementById('lang-switch').addEventListener('click', function (e) {
+  const btn = e.target.closest('button[data-lang]');
+  if (!btn || btn.dataset.lang === LANG) return;
+  LANG = btn.dataset.lang;
+  localStorage.setItem('kija_lang', LANG);
+  applyLangStatic();
   render();
-})();
-</script>
+});
+
+applyLangStatic();
+render();
+})();</script>
 </body>
 </html>

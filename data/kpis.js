@@ -97,5 +97,5 @@
       frequency: 'quarterly', source: '财务'
     }
   ];
-  return { version: '2026-10-25', kpis };
+  return { version: '2026-10-27', kpis };
 });
